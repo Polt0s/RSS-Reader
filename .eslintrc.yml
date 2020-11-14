@@ -1,0 +1,14 @@
+plugins:
+  - jest
+
+extends:
+  - 'airbnb-base'
+  - 'plugin:jest/recommended'
+
+env:
+  node: true
+  jest: true
+
+rules:
+  no-console: 0
+  import/extensions: 0
