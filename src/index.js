@@ -1,1 +1,1 @@
-const proba = 2;
+console.log('privet!');
