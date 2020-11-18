@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import onChange from 'onChange';
+import onChange from 'on-change';
 import axios from 'axios';
 import _ from 'lodash';
 
@@ -28,6 +28,24 @@ const updateValidationState = (watcherState) => {
   watcherState.form.errors = errors;
 };
 
+const renderErrors = (elements, errors) => {
+  Object.entries(elements).forEach(([name, element]) => {
+    const errorElement = element.nextElementSibling;
+    const error = errors[name];
+    if (errorElement) {
+      element.classList.remove('errorElement');
+      element.remove();
+    }
+    if (!error) {
+      return;
+    }
+    const feedbackElement = document.createElement('div');
+    feedbackElement.classList.add('invalid-feedback');
+    feedbackElement.innerHTML = error.message;
+    element.classList.add('is-invalid');
+    element.after(feedbackElement);
+  });
+};
 
 const app = () => {
   const state = {
