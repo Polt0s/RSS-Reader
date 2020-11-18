@@ -1,8 +1,11 @@
 install:
 	npm install
 
-publish:
-	npm publish --dry-run
+start:
+	npx webpack-dev-server
+
+build:
+	npm run build
 
 lint:
 	npx eslint .
@@ -12,5 +15,3 @@ test:
 
 test-coverage:
 	npm test -- --coverage --coverageProvider=v8
-	
-.PHONY: test

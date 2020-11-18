@@ -1,24 +1,40 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
   <title>Webpack App</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <script defer="defer" src="main.bundle.js"></script>
+  <!-- <script type="module" defer="defer" src="main.bundle.js"></script> -->
+  <script type="module" defer="defer" src="index.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 
 <body>
-  <div class="jumbotron">
-    <h1 class="display-4">Hello, world!</h1>
-    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to
-      featured content or information.</p>
-    <hr class="my-4">
-    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-  </div>
+  <section class="jumbotron jumbotron-fluid bg-dark">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-10 col-lg-8 mx-auto text-white">
+          <h1 class="display-4">RSS Reader</h1>
+          <p class="lead">Start reading RSS today! It is easy, it is nicely.</p>
+          <div data-container="sign-up">
+            <form data-form="sign-up">
+              <div class="form-row">
+                <div class="col">
+                  <input class="form-control">
+                </div>
+                <div class="button-col">
+                  <button type="submit" class="btn btn-primary btn-lg">Add</button>
+                </div>
+              </div>
+          </div>
+          </form>
+          <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </body>
 
 </html>

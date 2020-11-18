@@ -1,1 +1,3 @@
-console.log('privet!');
+import app from './main.bundle.js';
+
+app();

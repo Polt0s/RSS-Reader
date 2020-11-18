@@ -2,6 +2,7 @@
   "name": "frontend-project-lvl3",
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/Polt0s/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/Polt0s/frontend-project-lvl3/actions)",
+  "type": "module",
   "scripts": {
     "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,6 +18,7 @@
   },
   "homepage": "https://github.com/Polt0s/frontend-project-lvl3#readme",
   "dependencies": {
+    "axios": "^0.21.0",
     "eslint": "^7.13.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
@@ -24,8 +26,11 @@
     "html-webpack-plugin": "^5.0.0-alpha.14",
     "jest": "^26.6.3",
     "jest-cli": "^26.6.3",
-    "webpack": "^5.4.0",
+    "lodash": "^4.17.20",
+    "on-change": "^2.2.0",
+    "webpack": "^5.5.0",
     "webpack-cli": "^4.2.0",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.0",
+    "yup": "^0.29.3"
   }
 }
