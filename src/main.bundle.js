@@ -4,21 +4,17 @@ import axios from 'axios';
 import _ from 'lodash';
 
 
-class State {
-  constructor() {
-    this.state = {
-      feed: {
-        chanels: [],
-        post: [],
-        activeChanels: '',
-      },
-      form: {
-        processState: 'filling',
-        value: '',
-        valid: true,
-        errors: [],
-      },
-    };
+const State = {
+  feed: {
+    channels: [],
+    post: [],
+    activeChanels: '',
+  },
+  form: {
+    processState: 'filling',
+    value: '',
+    valid: true,
+    errors: [],
   }
 };
 // const res = new State();
