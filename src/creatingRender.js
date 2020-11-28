@@ -1,6 +1,6 @@
-import _ from 'lodash';
 
-const Rendering = (text) => {
+
+const rendering = (text) => {
   const root = document.querySelector('.jumbotron');
   const creatinDiv = document.createElement('div');
   creatinDiv.classList.add('new-container');
@@ -67,7 +67,7 @@ const renderChangeElements = (id) => {
 }
 
 const isContent = {
-  context: Rendering,
+  context: rendering,
   renderChanels: renderChanels,
   renderChange: renderChangeElements,
 };
