@@ -1,7 +1,7 @@
 import onChange from 'on-change';
 import render from './creatingRender.js';
 
-const watched = (state, item) => {
+const watched = (state, text) => {
   const feedback = document.querySelector('.feedback');
   const submitButton = document.querySelector('[type="submit"]');
   const processStateHandler = (processState) => {
@@ -42,7 +42,6 @@ const watched = (state, item) => {
         channels.forEach((el) => {
           render('renderChange', [el, activeChanels]);
         });
-
         const listChannels = document.getElementById('list-rss');
         listChannels.addEvenListener('click', (e) => {
           state.feed.activeChanels = e.target.id;
@@ -51,6 +50,8 @@ const watched = (state, item) => {
       case 'feed.activeChanels':
         const rss = document.getElementById('list-rss');
         rss.innerHTML = '';
+        const filter = state.feed.post.filter(({ channelId }) => activeChanels === channelId);
+        render('items', filter);
       //
       case 'form.errors':
         const typeError = form.errors.join('');
@@ -64,5 +65,8 @@ const watched = (state, item) => {
     }
   });
 }
+
+
+
 
 export default watched;

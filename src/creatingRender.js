@@ -1,5 +1,3 @@
-
-
 const rendering = (text) => {
   const root = document.querySelector('.jumbotron');
   const creatinDiv = document.createElement('div');
@@ -23,6 +21,8 @@ const rendering = (text) => {
   listElements.classList.add('group-list');
   listElements.id = 'list-rss';
   channelElements.append(listElements);
+
+
 }
 
 const renderChanels = ([channel, activeChannels]) => {
@@ -59,6 +59,7 @@ const renderChanels = ([channel, activeChannels]) => {
   channelList.append(elementsList);
 }
 
+
 const renderChangeElements = (id) => {
   const activeChannels = document.querySelector('.active');
   activeChannels.classList.remove('active');
@@ -69,6 +70,7 @@ const renderChangeElements = (id) => {
 const isContent = {
   context: rendering,
   renderChanels: renderChanels,
+  // allItems: ,
   renderChange: renderChangeElements,
 };
 
