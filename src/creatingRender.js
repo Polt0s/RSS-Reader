@@ -1,77 +1,67 @@
-const rendering = (text) => {
-  const root = document.querySelector('.jumbotron');
-  const creatinDiv = document.createElement('div');
-  creatinDiv.classList.add('new-container');
-  root.append(creatinDiv);
+import i18next from 'i18next';
 
-  const commonChannel = document.createElement('div');
-  commonChannel.classList.add('row-channel');
-  root.append(commonChannel);
+const renderChannels = (channel) => {
+  const feedback = document.querySelector('.feedback');
+  feedback.innerHTML = '';
+  const urlInput = document.querySelector('.url-input');
+  urlInput.value = '';
 
-  const channelElements = document.createElement('div');
-  channelElements.classList.add('col-md-10', 'col-lg-8');
-  commonChannel.append(channelElements);
+  const headers = document.createElement('h4');
+  headers.classList.add('headerChannel', 'borderChannel');
+  headers.innerText = i18next.t('outputChannel');
 
-  const headerElement = document.createElement('h1');
-  headerElement.classList.add('header');
-  headerElement.textContent = text('headers');
-  channelElements.append(headerElement);
+  channel.forEach((feed) => {
+    const row = document.createElement('div');
+    row.classList.add('row');
+    const feedsContainer = document.createElement('div');
+    feedsContainer.classList.add('conteiner-channels', 'col-md-3', 'col-md-10');
+    feedsContainer.append(headers);
 
-  const listElements = document.createElement('div');
-  listElements.classList.add('group-list');
-  listElements.id = 'list-rss';
-  channelElements.append(listElements);
+    const title = document.createElement('h5');
+    const titleDescription = document.createElement('p');
+    title.classList.add('mt-2');
+    title.innerText = feed.title;
+    titleDescription.innerText = feed.description;
+    feedsContainer.append(title, titleDescription);
 
+    const postsContainer = document.createElement('div');
+    postsContainer.classList.add('container-posts', 'col-md-10');
+    postsContainer.setAttribute('id', feed.id);
+    row.append(feedsContainer, postsContainer);
 
-}
-
-const renderChanels = ([channel, activeChannels]) => {
-  const currentChannel = document.getElementById(`${channel.id}`);
-  if (currentChannel) {
-    currentChannel.remove();
-  }
-
-  const channelList = document.getElementById('list-rss');
-  const elementsList = document.createElement('a');
-  elementsList.classList.add('group-list-item', 'group-list-item-active');
-  elementsList.id = (`${channel.id}`);
-  // elementsList.href = '#';
-
-  const html = document.createElement('div');
-  const div = document.createElement('div');
-  div.setAttribute('class', 'd-sm-flex w-100 justify-content-between');
-  div.id = channel.id;
-
-  const paragraph = document.createElement('h1');
-  paragraph.setAttribute('class', 'md-5');
-  paragraph.id = channel.id;
-  div.append(paragraph);
-  const p = document.createElement('p');
-  p.setAttribute('class', 'md-5');
-  p.id = channel.id;
-  html.append(div, p);
-
-  if (channel.id === activeChannels) {
-    elementsList.classList.add('active');
-  }
-
-  elementsList.innerHTML = html;
-  channelList.append(elementsList);
-}
-
-
-const renderChangeElements = (id) => {
-  const activeChannels = document.querySelector('.active');
-  activeChannels.classList.remove('active');
-  const newActiveChannels = document.getElementById(id);
-  newActiveChannels.classList.add('active');
-}
-
-const isContent = {
-  context: rendering,
-  renderChanels: renderChanels,
-  // allItems: ,
-  renderChange: renderChangeElements,
+    feedback.classList.remove('invisible');
+    feedback.prepend(row);
+  });
 };
 
-export default (element, items) => isContent[element](items);
+const renderPosts = (posts) => {
+  const postsContainers = document.querySelectorAll('.container-posts');
+  // postsContainers.innerHTML = '';
+  postsContainers.forEach((postsContainer) => {
+    postsContainer.innerHTML = '';
+  });
+
+  posts.forEach((post) => {
+    console.log(post);
+    const conteiner = document.getElementById(post.feedId);
+    const header = document.createElement('h4');
+    const PostDescription = document.createElement('p');
+    const link = document.createElement('a');
+
+    header.innerText = post.title;
+    header.classList.add('col-md-10');
+    PostDescription.innerText = post.description;
+    link.innerText = i18next.t('outputRead');
+    link.classList.add('read-more');
+    link.href = post.link;
+    conteiner.append(header, PostDescription, link);
+  });
+
+  const postsContainer = document.querySelector('.container-posts');
+  const postsHeader = document.createElement('h5');
+  postsHeader.classList.add('posts-header', 'borderChannel');
+  postsHeader.innerText = i18next.t('outputPosts');
+  postsContainer.prepend(postsHeader);
+};
+
+export { renderChannels, renderPosts };

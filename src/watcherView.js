@@ -1,72 +1,73 @@
 import onChange from 'on-change';
-import render from './creatingRender.js';
+// import _ from 'lodash';
+import i18next from 'i18next';
+import { renderChannels, renderPosts } from './creatingRender.js';
 
-const watched = (state, text) => {
-  const feedback = document.querySelector('.feedback');
-  const submitButton = document.querySelector('[type="submit"]');
-  const processStateHandler = (processState) => {
-    switch (processState) {
-      case 'failed':
-        submitButton.disabled = false;
+const feedback = document.querySelector('.feedback');
+const submitButton = document.querySelector('[type="submit"]');
+const urlInput = document.querySelector('.url-input');
+
+const renderError = (err) => {
+  const { errors } = err;
+  // const typeError = errors.join('');
+
+  if (errors === '') {
+    urlInput.classList.remove('is-invalid');
+    feedback.classList.remove('text-danger');
+    feedback.textContent = '';
+    return;
+  }
+  urlInput.classList.add('is-invalid');
+  feedback.classList.add('text-danger');
+  feedback.textContent = i18next.t('errors');
+};
+
+const renderLoadingState = (loadingState) => {
+  switch (loadingState) {
+    case 'failed':
+      submitButton.disabled = false;
+      break;
+    case 'filling':
+      urlInput.classList.remove('is-invalid');
+      submitButton.disabled = false;
+      submitButton.innerText = 'add';
+      break;
+    case 'sending':
+      submitButton.disabled = true;
+      submitButton.innerText = i18next.t('button');
+      break;
+    case 'finished':
+      submitButton.disabled = false;
+      submitButton.innerText = i18next.t('button');
+      feedback.classList.add('text');
+      feedback.innerText = i18next.t('added');
+      break;
+    default:
+      throw new Error(`Unknown state: ${loadingState}`);
+  }
+};
+
+const getWatchedState = (state) => {
+  const watchedState = onChange(state, (path) => {
+    // console.log(state, path)
+    switch (path) {
+      case 'form':
+        renderLoadingState(state.form);
         break;
-      case 'filling':
-        submitButton.disabled = false;
-        submitButton.textContent = 'add';
+      case 'channels':
+        renderChannels(state.channels);
         break;
-      case 'sending':
-        submitButton.disabled = true;
-        submitButton.textContent = 'Loading';
+      case 'posts':
+        renderPosts(state.posts);
         break;
-      case 'finished':
-        submitButton.disabled = false;
-        submitButton.textContent = 'add';
-        feedback.classList.add('text');
-        feedback.textContent = 'added chanels';
+      case 'errors':
+        renderError(state.errors);
         break;
       default:
-        throw new Error(`Unknown state: ${processState}`);
-    };
-  };
-
-  const watchedState = onChange(state, (path, value) => {
-    switch (path) {
-      case 'form.processState':
-        processStateHandler(value);
         break;
-      case 'form.valid':
-        submitButton.disabled = !state.form.valid;
-      case 'form.value':
-        const fields = document.querySelector('[name="url"]');
-        fields.value = form.value;
-      case 'feed.channels':
-        channels.forEach((el) => {
-          render('renderChange', [el, activeChanels]);
-        });
-        const listChannels = document.getElementById('list-rss');
-        listChannels.addEvenListener('click', (e) => {
-          state.feed.activeChanels = e.target.id;
-          render('renderChange', e.target.id);
-        });
-      case 'feed.activeChanels':
-        const rss = document.getElementById('list-rss');
-        rss.innerHTML = '';
-        const filter = state.feed.post.filter(({ channelId }) => activeChanels === channelId);
-        render('items', filter);
-      //
-      case 'form.errors':
-        const typeError = form.errors.join('');
-        if (typeError === '' || state.form.value === '') {
-          fields.classList.remove('is-invalid');
-          feedback.textContent = '';
-          break;
-        }
-        fields.classList.add('is-invalid');
-        feedback.textContent = `form.errors.${typeError}`;
     }
   });
-}
+  return watchedState;
+};
 
-
-
-
-export default watched;
+export default getWatchedState;

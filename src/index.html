@@ -1,28 +1,35 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Webpack App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>RSS Aggregator</title>
 </head>
 
-<body>
-  <div class="container mt-5">
-    <div class="jumbotron jumbotron-fluid bg-dark">
-      <div class="container col-md-10 col-lg-8 mx-auto text-white">
-        <h1>RSS Reader</h1>
-        <p class="lead">Start reading RSS today! It is easy, it is nicely.</p>
-        <form class="form-inline form-active">
-          <div class="form-group">
-            <input required="" name="url" class="form-control" placeholder="RSS link">
+<body class="d-flex flex-column min-vh-100">
+  <main class="flex-grow-1">
+    <section class="jumbotron jumbotron-fluid bg-dark">
+      <div class="container-xl">
+        <div class="row">
+          <div class="col-md-10 col-lg-8 mx-auto text-white">
+            <h1 class="display-3">RSS Reader</h1>
+            <p class="lead">Start reading RSS today! It is easy, it is nicely.</p>
+            <form class="rss-form">
+              <div class="form-row">
+                <div class="col"><input autofocus="" required="" name="url" aria-label="url"
+                    class="url-input form-control form-control-lg w-100" placeholder="RSS link"></div>
+                <div class="col-auto"><button type="submit" aria-label="add"
+                    class="btn-button btn-primary btn btn-lg px-sm-5">Add</button></div>
+              </div>
+            </form>
+            <p class="text-muted my-1">Example: https://ru.hexlet.io/lessons.rss</p>
           </div>
-          <button type="submit" class="btn btn-primary" disabled="">Add</button>
-        </form>
-        <div class="feedback"></div>
+        </div>
       </div>
-    </div>
-  </div>
+    </section>
+    <div class="feedback invisible"></div>
+  </main>
 </body>
 
 </html>

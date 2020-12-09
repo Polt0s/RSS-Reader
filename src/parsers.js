@@ -1,18 +1,28 @@
 const parsers = (data) => {
-  const parser = DOMParser();
+  const parser = new DOMParser();
   const strParse = parser.parseFromString(data, 'text/xml');
-  const title = strParse.querySelector('title');
-  const descrioption = strParse.querySelector('description');
-  const elements = strParse.querySelector('element');
-  const sort = [...elements].forEach((el) => {
-    return { text: el.querySelector('line').innerHTML, link: el.querySelector('post').innerHTML };
+  // console.log(strParse);
+  const mainTitle = strParse.querySelector('title').textContent;
+  const mainDescription = strParse.querySelector('description').textContent;
+
+  const elements = strParse.querySelectorAll('item');
+  const posts = [...elements].map((postItem) => {
+    const title = postItem.querySelector('title').textContent;
+    const description = postItem.querySelector('description') ? postItem.querySelector('description').textContent
+      : '';
+    const link = postItem.querySelector('link').textContent;
+    const post = {
+      title, description, link,
+    };
+    return post;
   });
-  const output = {
-    title: title.innerHTML,
-    post: descrioption.innerHTML,
-    sort,
+
+  const feed = {
+    mainTitle,
+    mainDescription,
+    posts,
   };
-  return output;
+  return feed;
 };
 
 export default parsers;
