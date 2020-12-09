@@ -6,7 +6,7 @@ const parsers = (data) => {
   const mainDescription = strParse.querySelector('description').textContent;
 
   const elements = strParse.querySelectorAll('item');
-  const posts = [...elements].map((postItem) => {
+  const allPosts = [...elements].map((postItem) => {
     const title = postItem.querySelector('title').textContent;
     const description = postItem.querySelector('description') ? postItem.querySelector('description').textContent
       : '';
@@ -20,7 +20,7 @@ const parsers = (data) => {
   const feed = {
     mainTitle,
     mainDescription,
-    posts,
+    allPosts,
   };
   return feed;
 };
