@@ -6,11 +6,21 @@ import { renderChannels, renderPosts } from './creatingRender.js';
 // const feedback = document.querySelector('.feedback');
 const submitButton = document.querySelector('[type="submit"]');
 const urlInput = document.querySelector('.url-input');
-// const htmlErrors = document.querySelector('.error');
+const htmlErrors = document.querySelector('.error');
 
-// const renderError = () => {
-
-// }
+const renderError = (err) => {
+  // const { errors } = state;
+  const errorType = err.join('');
+  if (errorType === '') {
+    urlInput.classList.remove('is-invalid');
+    htmlErrors.classList.remove('text-danger');
+    htmlErrors.textContent = '';
+    return;
+  }
+  urlInput.classList.add('is-invalid');
+  htmlErrors.classList.add('text-danger');
+  htmlErrors.textContent = i18next.t('errors');
+};
 
 const renderForm = (valid, loadingState) => {
   switch (loadingState) {
@@ -54,9 +64,9 @@ const getWatchedState = (state) => {
       case 'posts':
         renderPosts(state.posts);
         break;
-      // case 'errors':
-      //   renderError(state.errors);
-      //   break;
+      case 'errors':
+        renderError(state.errors);
+        break;
       default:
         break;
     }
