@@ -7,7 +7,27 @@
   <title>RSS Aggregator</title>
 </head>
 
-<body class="d-flex flex-column min-vh-100">
+<body class="body d-flex flex-column min-vh-100" style>
+  <!--Modal-->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="modal" style="display: none"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <a class="btn btn-primary full-article" href="#" role="button" target="_blank">Full Article</a>
+          <button type="button" id="close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <main class="flex-grow-1">
     <section class="jumbotron jumbotron-fluid bg-dark">
       <div class="container-xl">
@@ -25,14 +45,15 @@
             </form>
             <p class="text-muted my-1">Example: https://ru.hexlet.io/lessons.rss</p>
             <div class="col-md-8">
-              <p class="error text-right text-danger mt-2 mb-0"></p>
+              <p class="error text-left text-danger mt-2 mb-0"></p>
             </div>
           </div>
         </div>
       </div>
     </section>
-    <div class="feedback invisible"></div>
+    <div class="feedback invisible col-md-10 col-lg-8 mx-auto"></div>
   </main>
+  <footer class="footer border-top py-3 mt-5"></footer>
 </body>
 
 </html>

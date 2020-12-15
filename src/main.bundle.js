@@ -83,7 +83,6 @@ const startApp = () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const url = formData.get('url');
-    // console.log('url', url);
     getNewRSS(url);
   });
 

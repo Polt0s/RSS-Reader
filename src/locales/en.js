@@ -11,5 +11,6 @@ export default {
     outputRead: '...Read',
     added: 'added Channel',
     errors: 'Input address is invalid',
+    errorsTrue: 'Rss has been loaded',
   },
 };
