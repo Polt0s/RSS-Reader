@@ -48,17 +48,21 @@ const renderPosts = (posts) => {
     const modalHref = document.querySelector('.full-article');
     const body = document.querySelector('.body');
 
+    const modalBackground = document.createElement('div');
+    modalBackground.classList.add('modal-backdrop', 'fade', 'show');
+
     const openButton = (modal) => {
+      body.classList.add('modal-open');
       modal.classList.add('show');
       // eslint-disable-next-line no-param-reassign
       modal.style.display = 'block';
       modal.removeAttribute('aria-hidden');
       modal.setAttribute('aria-modal', 'true');
       modal.setAttribute('role', 'dialog');
-      body.classList.add('modal-open');
       modalTitle.innerText = post.title;
       modalDescription.innerText = post.description;
       modalHref.href = post.link;
+      body.append(modalBackground);
     };
     const closeHandler = (modal) => {
       modal.classList.remove('show');
@@ -68,6 +72,7 @@ const renderPosts = (posts) => {
       modal.removeAttribute('role');
       modal.setAttribute('aria-hidden', 'true');
       body.classList.remove('modal-open');
+      modalBackground.remove();
     };
 
     const modal = document.getElementById('myModal');

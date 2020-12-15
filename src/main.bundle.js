@@ -1,4 +1,4 @@
-// import _ from 'lodash';
+import _ from 'lodash';
 import * as yup from 'yup';
 import i18next from 'i18next';
 import axios from 'axios';
@@ -54,29 +54,26 @@ const startApp = () => {
       });
   };
 
-  // const rssCheckUpdate = (state) => {
-  //   const { channels, posts } = state;
-  //   const promiseUrl = channels.map(({ url }) => axios.get(getProxyUrl(url)));
-  //   const update = ({ data }) => {
-  //     const feedData = parsers(data.contents);
-  //     const { mainTitle, allPosts } = feedData;
-  //     const allPostsink = allPosts.map(({ link }) => link);
+  // eslint-disable-next-line no-shadow
+  const rssCheckUpdate = (state) => {
+    const { channels, posts } = state;
+    channels.forEach((feed) => {
+      axios.get(getProxyUrl(feed.url))
+        .then((response) => {
+          const newRss = parsers(response.data.contents);
+          const { title, allPosts } = newRss;
+          const updateLink = allPosts.map(({ link }) => link);
+          const currentChannel = channels.find((channel) => channel.title === title);
+          const currentPosts = posts.filter(({ feedId }) => feedId === currentChannel.id);
+          const currentLink = currentPosts.map(({ link }) => link);
+          const postsDifferenceList = _.difference(updateLink, currentLink);
+          return [...currentPosts, ...postsDifferenceList];
+        });
+    });
+    setTimeout(() => rssCheckUpdate(state), 5000);
+  };
 
-  //     const ChannelUp = channels.map((channel) => channel.mainTitle === mainTitle);
-  //     // console.log(ChannelUp);
-  //     const updateList = posts.filter(({ feedId }) => feedId === ChannelUp.id);
-  //     const updateLink = updateList.map(({ link }) => link);
-
-  //     const output = _.difference(allPostsink, updateLink);
-  //     return [...updateList, ...output];
-  //   };
-  //   Promise.all(promiseUrl)
-  //     .then((response) => {
-  //       response.forEach(update);
-  //     }).finally(() => setTimeout(() => rssCheckUpdate(state), 5000));
-  // };
-
-  // rssCheckUpdate(state);
+  rssCheckUpdate(state);
 
   const form = document.querySelector('.rss-form');
   form.addEventListener('submit', (e) => {
