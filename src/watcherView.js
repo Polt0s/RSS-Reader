@@ -1,6 +1,8 @@
 import onChange from 'on-change';
 import i18next from 'i18next';
-import { renderChannels, renderPosts, renderError } from './creatingRender.js';
+import {
+  renderChannels, renderPosts, renderError, renderModal,
+} from './creatingRender.js';
 
 const submitButton = document.querySelector('[type="submit"]');
 const urlInput = document.querySelector('.url-input');
@@ -31,7 +33,7 @@ const renderForm = (valid, loadingState) => {
 
 const getWatchedState = (state) => {
   const watchedState = onChange(state, (path) => {
-    // console.log(state, path)
+    console.log(state, path)
     switch (path) {
       case 'form':
         renderForm(state.form.valid, state.form.loadingState);
@@ -44,6 +46,9 @@ const getWatchedState = (state) => {
         break;
       case 'errors':
         renderError(state.errors);
+        break;
+      case 'modal':
+        renderModal(state.posts.find(({ id }) => id === state.modal.id));
         break;
       default:
         break;

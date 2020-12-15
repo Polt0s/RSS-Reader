@@ -1,23 +1,32 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const path = require('path');
+const webpack = require('webpack');
+
+const mode = process.env.NODE_ENV || 'development';
 
 module.exports = {
-  entry: {
-    main: path.resolve(__dirname, 'src/index.js'),
-  },
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: '[name].bundle.js',
+  mode,
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: 'Development',
+      template: 'src/index.html',
+    }),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+      'window.jQuery': 'jquery',
+      Tether: 'tether',
+      Popper: ['popper.js', 'default'],
+      'window.Tether': 'tether',
+    }),
+  ],
+  devServer: {
+    open: true,
+    port: 3000,
   },
   module: {
     rules: [
       {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
-      },
-      {
         test: /\.js$/,
-        exclude: /(node_modules)/,
         use: {
           loader: 'babel-loader',
           options: {
@@ -25,15 +34,19 @@ module.exports = {
           },
         },
       },
+      { test: /\.css$/, use: ['style-loader', 'css-loader', 'postcss-loader'] },
+      {
+        test: /\.scss$/,
+        use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
+      },
+      {
+        test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        use: 'url-loader?limit=10000',
+      },
+      {
+        test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
+        use: 'file-loader',
+      },
     ],
   },
-  devServer: {
-    open: true,
-    port: 3000,
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: 'src/index.html',
-    }),
-  ],
 };

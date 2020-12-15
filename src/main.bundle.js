@@ -19,6 +19,7 @@ const startApp = () => {
   const state = {
     channels: [],
     posts: [],
+    modal: { id: null },
     form: {
       loadingState: 'filling',
       value: '',
@@ -96,6 +97,15 @@ const startApp = () => {
       watchedState.form.valid = false;
       watchedState.errors = [err.type];
     }
+  });
+
+  const clickPost = document.querySelector('.feedback');
+  clickPost.addEventListener('click', (e) => {
+    if (!e.target.dataset.id) {
+      return;
+    }
+    const postId = e.target.dataset.id;
+    watchedState.modal = { id: postId };
   });
 };
 

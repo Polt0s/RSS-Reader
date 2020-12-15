@@ -10,8 +10,9 @@ const parsers = (data) => {
     const description = postItem.querySelector('description') ? postItem.querySelector('description').textContent
       : '';
     const link = postItem.querySelector('link').textContent;
+    const id = postItem.querySelector('guid').textContent;
     const post = {
-      title, description, link,
+      title, description, link, id,
     };
     return post;
   });

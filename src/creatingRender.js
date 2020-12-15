@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-
+// import jqery from ''
 const feedback = document.querySelector('.feedback');
 const urlInput = document.querySelector('.url-input');
 const htmlErrors = document.querySelector('.error');
@@ -43,39 +43,6 @@ const renderPosts = (posts) => {
 
   posts.forEach((post) => {
     // console.log(post);
-    const modalTitle = document.querySelector('.modal-title');
-    const modalDescription = document.querySelector('.modal-body');
-    const modalHref = document.querySelector('.full-article');
-    const body = document.querySelector('.body');
-
-    const modalBackground = document.createElement('div');
-    modalBackground.classList.add('modal-backdrop', 'fade', 'show');
-
-    const openButton = (modal) => {
-      body.classList.add('modal-open');
-      modal.classList.add('show');
-      // eslint-disable-next-line no-param-reassign
-      modal.style.display = 'block';
-      modal.removeAttribute('aria-hidden');
-      modal.setAttribute('aria-modal', 'true');
-      modal.setAttribute('role', 'dialog');
-      modalTitle.innerText = post.title;
-      modalDescription.innerText = post.description;
-      modalHref.href = post.link;
-      body.append(modalBackground);
-    };
-    const closeHandler = (modal) => {
-      modal.classList.remove('show');
-      // eslint-disable-next-line no-param-reassign
-      modal.style.display = 'none';
-      modal.removeAttribute('aria-modal');
-      modal.removeAttribute('role');
-      modal.setAttribute('aria-hidden', 'true');
-      body.classList.remove('modal-open');
-      modalBackground.remove();
-    };
-
-    const modal = document.getElementById('myModal');
 
     const conteiner = document.getElementById(post.feedId);
     const rootContainer = document.createElement('div');
@@ -96,17 +63,19 @@ const renderPosts = (posts) => {
     button.textContent = 'preview';
     button.classList.add('btn-click', 'btn-primary', 'btn', 'px-sm', 'border-right');
     button.setAttribute('data-toggle', 'modal');
-    button.setAttribute('data-target', '#exampleModal');
+    button.setAttribute('data-target', '#myModal');
+    button.dataset.id = post.id;
+    // <button data-id='123'>
 
-    button.addEventListener('click', openButton.bind(null, modal));
-    button.addEventListener('click', () => {
-      header.classList.remove('font-weight-bold');
-      header.classList.add('font-weight-normal');
-    });
-    const closeButton = document.querySelector('[data-dismiss="modal"]');
-    closeButton.addEventListener('click', closeHandler.bind(null, modal));
-    const closeButton2 = document.getElementById('close');
-    closeButton2.addEventListener('click', closeHandler.bind(null, modal));
+    // button.addEventListener('click', openButton.bind(null, modal));
+    // button.addEventListener('click', () => {
+    //   header.classList.remove('font-weight-bold');
+    //   header.classList.add('font-weight-normal');
+    // });
+    // const closeButton = document.querySelector('[data-dismiss="modal"]');
+    // closeButton.addEventListener('click', closeHandler.bind(null, modal));
+    // const closeButton2 = document.getElementById('close');
+    // closeButton2.addEventListener('click', closeHandler.bind(null, modal));
 
     rootContainer.append(header, button);
     conteiner.append(rootContainer);
@@ -117,6 +86,16 @@ const renderPosts = (posts) => {
   postsHeader.classList.add('posts-header');
   postsHeader.innerText = i18next.t('outputPosts');
   postsContainer.prepend(postsHeader);
+};
+
+const modalTitle = document.querySelector('.modal-title');
+const modalDescription = document.querySelector('.modal-body');
+const modalHref = document.querySelector('.full-article');
+
+const renderModal = (post) => {
+  modalTitle.innerText = post.title;
+  modalDescription.innerText = post.description;
+  modalHref.href = post.link;
 };
 
 const renderError = (err) => {
@@ -134,4 +113,6 @@ const renderError = (err) => {
   htmlErrors.style.fontSize = '14pt';
 };
 
-export { renderChannels, renderPosts, renderError };
+export {
+  renderChannels, renderPosts, renderError, renderModal,
+};
