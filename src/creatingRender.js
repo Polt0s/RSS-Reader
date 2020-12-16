@@ -1,91 +1,68 @@
 import i18next from 'i18next';
-// import jqery from ''
-const feedback = document.querySelector('.feedback');
+
 const urlInput = document.querySelector('.url-input');
 const htmlErrors = document.querySelector('.error');
 
 const renderChannels = (channel) => {
-  feedback.innerHTML = '';
-  urlInput.value = '';
+  const channelElement = document.querySelector('.feeds');
+  channelElement.innerHTML = '';
 
-  const headers = document.createElement('h4');
+  const headers = document.createElement('h2');
   headers.classList.add('headerChannel');
   headers.innerText = i18next.t('outputChannel');
 
   channel.forEach((feed) => {
-    // console.log(feed)
-    const row = document.createElement('div');
-    row.classList.add('row');
-    const feedsContainer = document.createElement('div');
-    feedsContainer.classList.add('conteiner-channels', 'col-md-3', 'border-bottom', 'border-right', 'border-left');
-    feedsContainer.append(headers);
-
-    const title = document.createElement('h5');
-    const titleDescription = document.createElement('p');
-    title.classList.add('mt-2');
+    const ulFeed = document.createElement('ul');
+    ulFeed.classList.add('list-group', 'mb-5');
+    const items = document.createElement('li');
+    items.classList.add('list-group-item');
+    const title = document.createElement('h3');
     title.innerText = feed.mainTitle;
-    titleDescription.innerText = feed.mainDescription;
-    feedsContainer.append(title, titleDescription);
-
-    const postsContainer = document.createElement('div');
-    postsContainer.classList.add('container-posts', 'col-md-9', 'border-bottom', 'border-right', 'border-left');
-    postsContainer.setAttribute('id', feed.id);
-    row.append(feedsContainer, postsContainer);
-
-    feedback.classList.remove('invisible');
-    feedback.prepend(row);
+    const description = document.createElement('p');
+    description.innerText = feed.mainDescription;
+    items.append(title, description);
+    ulFeed.append(items);
+    channelElement.append(headers, ulFeed);
   });
 };
 
 const renderPosts = (posts) => {
-  const postsContainers = document.querySelectorAll('.container-posts');
-  postsContainers.innerHTML = '';
+  const postsContainers = document.querySelector('.posts');
+  postsContainers.innerText = '';
+  const postsHeader = document.createElement('h2');
+  postsHeader.innerText = i18next.t('outputPosts');
+  const ulPost = document.createElement('ul');
+  ulPost.classList.add('list-group');
 
   posts.forEach((post) => {
-    // console.log(post);
-
-    const conteiner = document.getElementById(post.feedId);
-    const rootContainer = document.createElement('div');
-    rootContainer.classList.add('d-flex', 'justify-content-between', 'border-bottom', 'border-top');
+    const elements = document.createElement('li');
+    elements.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
     const header = document.createElement('a');
-    header.innerText = post.title;
-    header.classList.add('probaActive', 'font-weight-bold', 'mt-2', 'mb-0');
+    header.classList.add('active', 'font-weight-bold');
     header.setAttribute('target', '_blank');
     header.href = post.link;
+    header.innerText = post.title;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = 'preview';
+    button.classList.add('btn', 'btn-primary', 'btn-sm');
+    button.setAttribute('data-toggle', 'modal');
+    button.setAttribute('data-target', '#myModal');
+    button.dataset.id = post.id;
+
+    elements.append(header, button);
+    ulPost.append(elements);
 
     header.addEventListener('click', () => {
       header.classList.remove('font-weight-bold');
       header.classList.add('font-weight-normal');
     });
-
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.textContent = 'preview';
-    button.classList.add('btn-click', 'btn-primary', 'btn', 'px-sm', 'border-right');
-    button.setAttribute('data-toggle', 'modal');
-    button.setAttribute('data-target', '#myModal');
-    button.dataset.id = post.id;
-    // <button data-id='123'>
-
-    // button.addEventListener('click', openButton.bind(null, modal));
-    // button.addEventListener('click', () => {
-    //   header.classList.remove('font-weight-bold');
-    //   header.classList.add('font-weight-normal');
-    // });
-    // const closeButton = document.querySelector('[data-dismiss="modal"]');
-    // closeButton.addEventListener('click', closeHandler.bind(null, modal));
-    // const closeButton2 = document.getElementById('close');
-    // closeButton2.addEventListener('click', closeHandler.bind(null, modal));
-
-    rootContainer.append(header, button);
-    conteiner.append(rootContainer);
+    button.addEventListener('click', () => {
+      header.classList.remove('font-weight-bold');
+      header.classList.add('font-weight-normal');
+    });
   });
-
-  const postsContainer = document.querySelector('.container-posts');
-  const postsHeader = document.createElement('h5');
-  postsHeader.classList.add('posts-header');
-  postsHeader.innerText = i18next.t('outputPosts');
-  postsContainer.prepend(postsHeader);
+  postsContainers.append(postsHeader, ulPost);
 };
 
 const modalTitle = document.querySelector('.modal-title');

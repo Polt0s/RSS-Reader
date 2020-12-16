@@ -33,7 +33,7 @@ const renderForm = (valid, loadingState) => {
 
 const getWatchedState = (state) => {
   const watchedState = onChange(state, (path) => {
-    console.log(state, path)
+    // console.log(state, path);
     switch (path) {
       case 'form':
         renderForm(state.form.valid, state.form.loadingState);

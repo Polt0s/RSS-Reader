@@ -54,7 +54,8 @@ const startApp = () => {
         }
       });
   };
-
+  // https://lorem-rss.herokuapp.com/feed?unit=second&interval=30
+  // http://feeds.rucast.net/radio-t
   // eslint-disable-next-line no-shadow
   const rssCheckUpdate = (state) => {
     const { channels, posts } = state;
@@ -99,7 +100,7 @@ const startApp = () => {
     }
   });
 
-  const clickPost = document.querySelector('.feedback');
+  const clickPost = document.querySelector('.posts');
   clickPost.addEventListener('click', (e) => {
     if (!e.target.dataset.id) {
       return;
