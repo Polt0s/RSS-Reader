@@ -1,42 +1,37 @@
+/* eslint-disable no-param-reassign */
 import i18next from 'i18next';
 
-const urlInput = document.querySelector('.url-input');
-const htmlErrors = document.querySelector('.error');
-
-const renderChannels = (channel) => {
-  const channelElement = document.querySelector('.feeds');
-  channelElement.innerHTML = '';
-
+const renderChannel = (state, elements) => {
+  elements.channel.innerHTML = '';
   const headers = document.createElement('h2');
   headers.classList.add('headerChannel');
-  headers.innerText = i18next.t('outputChannel');
+  headers.textContent = i18next.t('Channel');
 
-  channel.forEach((feed) => {
+  state.channel.forEach((feed) => {
     const ulFeed = document.createElement('ul');
     ulFeed.classList.add('list-group', 'mb-5');
     const items = document.createElement('li');
     items.classList.add('list-group-item');
     const title = document.createElement('h3');
-    title.innerText = feed.mainTitle;
+    title.innerText = feed.title;
     const description = document.createElement('p');
-    description.innerText = feed.mainDescription;
+    description.innerText = feed.description;
     items.append(title, description);
     ulFeed.append(items);
-    channelElement.append(headers, ulFeed);
+    elements.channel.append(headers, ulFeed);
   });
 };
 
-const renderPosts = (posts) => {
-  const postsContainers = document.querySelector('.posts');
-  postsContainers.innerText = '';
+const renderPosts = (state, elements) => {
+  elements.posts.innerText = '';
   const postsHeader = document.createElement('h2');
-  postsHeader.innerText = i18next.t('outputPosts');
+  postsHeader.innerText = i18next.t('Posts');
   const ulPost = document.createElement('ul');
   ulPost.classList.add('list-group');
 
-  posts.forEach((post) => {
-    const elements = document.createElement('li');
-    elements.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
+  state.posts.forEach((post) => {
+    const items = document.createElement('li');
+    items.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
     const header = document.createElement('a');
     header.classList.add('active', 'font-weight-bold');
     header.setAttribute('target', '_blank');
@@ -50,8 +45,8 @@ const renderPosts = (posts) => {
     button.setAttribute('data-target', '#myModal');
     button.dataset.id = post.id;
 
-    elements.append(header, button);
-    ulPost.append(elements);
+    items.append(header, button);
+    ulPost.append(items);
 
     header.addEventListener('click', () => {
       header.classList.remove('font-weight-bold');
@@ -62,34 +57,42 @@ const renderPosts = (posts) => {
       header.classList.add('font-weight-normal');
     });
   });
-  postsContainers.append(postsHeader, ulPost);
+  elements.posts.append(postsHeader, ulPost);
 };
 
 const modalTitle = document.querySelector('.modal-title');
 const modalDescription = document.querySelector('.modal-body');
 const modalHref = document.querySelector('.full-article');
 
-const renderModal = (post) => {
-  modalTitle.innerText = post.title;
-  modalDescription.innerText = post.description;
-  modalHref.href = post.link;
+const renderModal = (posts) => {
+  modalTitle.innerText = posts.title;
+  modalDescription.innerText = posts.description;
+  modalHref.href = posts.link;
 };
 
-const renderError = (err) => {
-  const errorType = err.join('');
-  if (errorType === '') {
-    urlInput.classList.remove('is-invalid');
-    htmlErrors.classList.remove('text-danger');
-    htmlErrors.textContent = i18next.t('errorsTrue');
-    htmlErrors.style.color = 'green';
-    return;
+const renderForm = (form, elements) => {
+  const errors = [...form.errors];
+  if (errors.length > 0) {
+    elements.output.classList.add('text-danger');
+    if (errors.includes('notOneOf')) {
+      elements.output.textContent = i18next.t('errors');
+    } else {
+      elements.output.textContent = i18next.t('errorsUrl');
+    }
+  } else if (errors.length === 0) {
+    elements.output.classList.add('text-success');
+    elements.output.textContent = i18next.t('loading');
   }
-  urlInput.classList.add('is-invalid');
-  htmlErrors.classList.add('text-danger');
-  htmlErrors.textContent = i18next.t('errors');
-  htmlErrors.style.fontSize = '14pt';
+  elements.input.value = form.currentURL;
+
+  if (errors.includes('url')) {
+    elements.input.classList.add('is-invalid');
+  } else {
+    elements.input.classList.remove('is-invalid');
+  }
+  elements.button.disabled = true;
 };
 
 export {
-  renderChannels, renderPosts, renderError, renderModal,
+  renderChannel, renderPosts, renderForm, renderModal,
 };

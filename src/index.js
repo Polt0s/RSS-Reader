@@ -1,4 +1,4 @@
-import app from './main.bundle.js';
+import app from './init.js';
 import 'bootstrap';
 import './app.scss';
 
