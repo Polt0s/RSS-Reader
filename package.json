@@ -2,6 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/Polt0s/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/Polt0s/frontend-project-lvl3/actions)",
+  "main": "src/init.js",
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server",
