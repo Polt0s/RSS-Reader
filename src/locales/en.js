@@ -7,7 +7,8 @@ export default {
     Channel: 'Channel',
     Posts: 'Posts',
     loading: 'Rss has been loaded',
-    errorsUrl: 'invalid url',
+    errorsUrl: 'Must be valid url',
     errors: 'Rss already exists',
+    errorsRss: "This source doesn't contain valid rss",
   },
 };

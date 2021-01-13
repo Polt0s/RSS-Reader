@@ -4,8 +4,8 @@ import i18next from 'i18next';
 const renderChannel = (state, elements) => {
   elements.channel.innerHTML = '';
   const headers = document.createElement('h2');
-  headers.classList.add('headerChannel');
   headers.textContent = i18next.t('Channel');
+  elements.channel.append(headers);
 
   state.channel.forEach((feed) => {
     const ulFeed = document.createElement('ul');
@@ -18,7 +18,7 @@ const renderChannel = (state, elements) => {
     description.innerText = feed.description;
     items.append(title, description);
     ulFeed.append(items);
-    elements.channel.append(headers, ulFeed);
+    elements.channel.append(ulFeed);
   });
 };
 
@@ -70,17 +70,32 @@ const renderModal = (posts) => {
   modalHref.href = posts.link;
 };
 
+const elementReadonly = (input, value) => {
+  if (value === true) {
+    input.setAttribute('readonly', 'readonly');
+  }
+  input.removeAttribute('readonly');
+};
+
 const renderForm = (form, elements) => {
   const errors = [...form.errors];
   if (errors.length > 0) {
+    elementReadonly(elements.input, false);
     elements.output.classList.add('text-danger');
+    elements.output.textContent = i18next.t('errorsRss');
     if (errors.includes('notOneOf')) {
+      elementReadonly(elements.input, true);
+      elements.output.classList.add('text-danger');
       elements.output.textContent = i18next.t('errors');
     } else {
+      elementReadonly(elements.input, false);
+      elements.output.classList.remove('text-success');
       elements.output.textContent = i18next.t('errorsUrl');
     }
   } else if (errors.length === 0) {
+    elementReadonly(elements.input, true);
     elements.output.classList.add('text-success');
+    elements.output.classList.remove('text-danger');
     elements.output.textContent = i18next.t('loading');
   }
   elements.input.value = form.currentURL;
