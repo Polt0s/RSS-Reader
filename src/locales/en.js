@@ -10,5 +10,6 @@ export default {
     errorsUrl: 'Must be valid url',
     errors: 'Rss already exists',
     errorsRss: "This source doesn't contain valid rss",
+    network: 'Network error',
   },
 };

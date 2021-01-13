@@ -70,35 +70,30 @@ const renderModal = (posts) => {
   modalHref.href = posts.link;
 };
 
-const elementReadonly = (input, value) => {
-  if (value === true) {
-    input.setAttribute('readonly', 'readonly');
-  }
-  input.removeAttribute('readonly');
-};
-
 const renderForm = (form, elements) => {
+  const { input, output } = elements;
   const errors = [...form.errors];
+  // console.log(errors)
   if (errors.length > 0) {
-    elementReadonly(elements.input, false);
-    elements.output.classList.add('text-danger');
-    elements.output.textContent = i18next.t('errorsRss');
+    // elements.input.removeAttribute('readonly');
+    output.classList.add('text-danger');
+    output.textContent = i18next.t('errorsRss');
     if (errors.includes('notOneOf')) {
-      elementReadonly(elements.input, true);
-      elements.output.classList.add('text-danger');
-      elements.output.textContent = i18next.t('errors');
-    } else {
-      elementReadonly(elements.input, false);
-      elements.output.classList.remove('text-success');
-      elements.output.textContent = i18next.t('errorsUrl');
+      // input.setAttribute('readonly', 'readonly');
+      output.classList.add('text-danger');
+      output.textContent = i18next.t('errors');
+    } else if (errors.includes('url')) {
+      // input.removeAttribute('readonly');
+      output.classList.remove('text-success');
+      output.textContent = i18next.t('errorsUrl');
     }
   } else if (errors.length === 0) {
-    elementReadonly(elements.input, true);
-    elements.output.classList.add('text-success');
-    elements.output.classList.remove('text-danger');
-    elements.output.textContent = i18next.t('loading');
+    // input.setAttribute('readonly', 'readonly');
+    output.classList.add('text-success');
+    output.classList.remove('text-danger');
+    output.textContent = i18next.t('loading');
   }
-  elements.input.value = form.currentURL;
+  input.value = form.currentURL;
 
   if (errors.includes('url')) {
     elements.input.classList.add('is-invalid');
@@ -107,6 +102,45 @@ const renderForm = (form, elements) => {
   }
   elements.button.disabled = true;
 };
+
+// const renderloadingState = (loadingState, elements) => {
+//   const { input, output } = elements;
+//   switch (loadingState.status) {
+//     case 'loading':
+//       input.setAttribute('readonly', 'readonly');
+//       output.classList.add('text-success');
+//       output.classList.remove('text-danger');
+//       output.textContent = '';
+//       break;
+//     case 'failed':
+//       input.removeAttribute('readonly');
+//       output.classList.add('text-danger');
+//       // output.textContent
+//       break;
+//     case 'watching':
+//       input.removeAttribute('readonly');
+//       output.textContent = i18next.t('loading');
+//       break;
+//     default:
+//       input.setAttribute('readonly', 'readonly');
+//       output.classList.remove('text-danger');
+//       output.textContent = i18next.t('errorsRss');
+//       throw new Error(`Unknown status: '${loadingState.status}'`);
+//   }
+// };
+
+// const renderForm = (form, elements) => {
+//   const { output, input } = elements;
+//   const errors = [...form.errors];
+//   if (errors.includes('url')) {
+//     input.classList.add('is-invalid');
+//     output.classList.remove('text-success');
+//     output.textContent = i18next.t('errorsUrl');
+//     output.classList.remove('text-danger');
+//   } else {
+//     input.classList.remove('is-invalid');
+//   }
+// };
 
 export {
   renderChannel, renderPosts, renderForm, renderModal,

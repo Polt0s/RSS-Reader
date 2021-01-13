@@ -10,15 +10,25 @@ import getWatchedState from './watchers';
 
 const getProxyUrl = (url) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
 
+yup.setLocale({
+  string: {
+    url: () => ({ key: 'errorsUrl' }),
+  },
+  mixed: {
+    required: () => ({ key: 'network' }),
+    notOneOf: () => ({ key: 'errors' }),
+  },
+});
+
 const validator = (channel) => {
   const channelsId = channel.map((e) => e.id);
   const schema = yup.object().shape({
-    url: yup.string().url(i18next.t('errorsUrl')).notOneOf(channelsId, i18next.t('errors')).required(i18next.t('errorsRss')),
+    url: yup.string().url().notOneOf(channelsId).required(),
   });
   return schema;
 };
 
-const app = () => {
+const startApp = () => {
   const state = {
     channel: [],
     posts: [],
@@ -108,25 +118,16 @@ const app = () => {
     const postId = e.target.dataset.id;
     watchedState.modal = { id: postId };
   });
-  // rssCheckUpdate(watchedState);
-  const init = () => {
-    i18next.init({
-      lng: 'en',
-      resources,
-    });
-  };
-  init();
   rssCheckUpdate(watchedState);
-  // rssCheckUpdate(watchedState);
 };
 
-// const app = () => {
-//   i18next.init({
-//     lng: 'en',
-//     resources,
-//   }).then(() => {
-//     startApp();
-//   });
-// };
+const app = () => {
+  i18next.init({
+    lng: 'en',
+    resources,
+  }).then(() => {
+    startApp();
+  });
+};
 
 export default app;

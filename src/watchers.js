@@ -19,3 +19,21 @@ const getWatchedState = (state, elements) => {
 };
 
 export default getWatchedState;
+
+// const getWatchedState = (state, elements) => {
+//   const watchedState = onChange(state, (path) => {
+//     switch(path) {
+//       case 'channel':
+//         renderChannel(state, elements);
+//       break;
+//       case 'posts':
+//         renderPosts(state, elements);
+//       break;
+//       case 'form':
+//         renderForm(state.form, elements);
+//         break;
+//       case 'loadingState':
+//         renderloadingState
+//     }
+//   })
+// }
