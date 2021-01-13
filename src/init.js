@@ -13,12 +13,12 @@ const getProxyUrl = (url) => `https://api.allorigins.win/get?url=${encodeURIComp
 const validator = (channel) => {
   const channelsId = channel.map((e) => e.id);
   const schema = yup.object().shape({
-    url: yup.string().url().notOneOf(channelsId).required(),
+    url: yup.string().url(i18next.t('errorsUrl')).notOneOf(channelsId, i18next.t('errors')).required(i18next.t('errorsRss')),
   });
   return schema;
 };
 
-const startApp = () => {
+const app = () => {
   const state = {
     channel: [],
     posts: [],
@@ -108,17 +108,25 @@ const startApp = () => {
     const postId = e.target.dataset.id;
     watchedState.modal = { id: postId };
   });
+  // rssCheckUpdate(watchedState);
+  const init = () => {
+    i18next.init({
+      lng: 'en',
+      resources,
+    });
+  };
+  init();
   rssCheckUpdate(watchedState);
+  // rssCheckUpdate(watchedState);
 };
 
-const app = () => {
-  i18next.init({
-    lng: 'en',
-    debug: true,
-    resources,
-  }).then(() => {
-    startApp();
-  });
-};
+// const app = () => {
+//   i18next.init({
+//     lng: 'en',
+//     resources,
+//   }).then(() => {
+//     startApp();
+//   });
+// };
 
 export default app;
