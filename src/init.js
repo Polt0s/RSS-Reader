@@ -8,7 +8,7 @@ import parseRSS from './rss.js';
 import resources from './locales/index.js';
 import getWatchedState from './watchers';
 
-const getProxyUrl = (url) => `https://api.allorigins.win/get?url=${url}`;
+const getProxyUrl = (url) => `https://hexlet-allorigins.herokuapp.com/get?url=${url}`;
 
 yup.setLocale({
   string: {
