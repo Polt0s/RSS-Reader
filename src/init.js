@@ -8,7 +8,14 @@ import parseRSS from './rss.js';
 import resources from './locales/index.js';
 import getWatchedState from './watchers';
 
-const getProxyUrl = (url) => `https://hexlet-allorigins.herokuapp.com/get?url=${url}`;
+// const getProxyUrl = (url) => `https://hexlet-allorigins.herokuapp.com/get?url=${url}`;
+
+const getProxyUrl = (url) => {
+  const urlWithProxy = new URL('/get', 'https://hexlet-allorigins.herokuapp.com');
+  urlWithProxy.searchParams.set('url', url);
+  urlWithProxy.searchParams.set('disableCache', 'true');
+  return urlWithProxy.toString();
+};
 
 yup.setLocale({
   string: {
