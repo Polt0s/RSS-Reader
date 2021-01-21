@@ -1,18 +1,18 @@
 const parseRSS = (data) => {
   const parser = new DOMParser();
-  const strParse = parser.parseFromString(data, 'text/xml');
+  const document = parser.parseFromString(data, 'text/xml');
 
-  const parseError = strParse.querySelector('parsererror');
+  const parseError = document.querySelector('parsererror');
   if (parseError) {
     const error = new Error(parseError.innerHTML);
     error.isParsingError = true;
     throw error;
   }
 
-  const mainTitle = strParse.querySelector('channel > title').innerHTML;
-  const mainDescription = strParse.querySelector('channel > description').innerHTML;
+  const mainTitle = document.querySelector('channel > title').innerHTML;
+  const mainDescription = document.querySelector('channel > description').innerHTML;
 
-  const elements = strParse.querySelectorAll('channel > item');
+  const elements = document.querySelectorAll('channel > item');
   const items = [...elements].map((postItem) => {
     const title = postItem.querySelector('title').innerHTML;
     const description = postItem.querySelector('description').innerHTML;

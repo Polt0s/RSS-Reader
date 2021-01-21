@@ -1,5 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-shadow */
 import * as yup from 'yup';
 import axios from 'axios';
 import _ from 'lodash';
@@ -7,8 +5,6 @@ import i18next from 'i18next';
 import parseRSS from './rss.js';
 import resources from './locales/index.js';
 import getWatchedState from './watchers';
-
-// const getProxyUrl = (url) => `https://hexlet-allorigins.herokuapp.com/get?url=${url}`;
 
 const getProxyUrl = (url) => {
   const urlWithProxy = new URL('/get', 'https://hexlet-allorigins.herokuapp.com');
@@ -27,17 +23,17 @@ yup.setLocale({
   },
 });
 
-const validator = (channel) => {
-  const channelsId = channel.map((e) => e.id);
+const validator = (feeds) => {
+  const feedsId = feeds.map((e) => e.id);
   const schema = yup.object().shape({
-    url: yup.string().url().notOneOf(channelsId).required(),
+    url: yup.string().url().notOneOf(feedsId).required(),
   });
   return schema;
 };
 
 const startApp = () => {
   const state = {
-    channel: [],
+    feeds: [],
     posts: [],
     modal: { id: null },
     readPosts: new Set(),
@@ -57,8 +53,8 @@ const startApp = () => {
     form: document.querySelector('form'),
     input: document.querySelector('.url-input'),
     button: document.querySelector('[type="submit"]'),
-    channel: document.querySelector('.feeds'),
-    posts: document.querySelector('.posts'),
+    feedsContainer: document.querySelector('.feeds'),
+    postsContainer: document.querySelector('.posts'),
     modalTitle: document.querySelector('.modal-title'),
     modalDescription: document.querySelector('.modal-body'),
     modalLink: document.querySelector('.full-article'),
@@ -73,7 +69,7 @@ const startApp = () => {
       .then((response) => {
         const rss = parseRSS(response.data.contents);
         const { title, description, posts } = rss;
-        watchedState.channel.push({
+        watchedState.feeds.push({
           title,
           description,
           url,
@@ -95,8 +91,8 @@ const startApp = () => {
       });
   };
 
-  const rssCheckUpdate = (watchedState) => {
-    const promise = watchedState.channel.map((id) => axios.get(getProxyUrl(id.url))
+  const rssCheckUpdate = () => {
+    const promise = watchedState.feeds.map((id) => axios.get(getProxyUrl(id.url))
       .then((response) => {
         const rss = parseRSS(response.data.contents);
         const { posts } = rss;
@@ -107,7 +103,7 @@ const startApp = () => {
         const newPosts = response.flat();
         watchedState.posts = [...state.posts, ...newPosts];
       });
-    setTimeout(() => rssCheckUpdate(watchedState), 5000);
+    setTimeout(() => rssCheckUpdate(), 5000);
   };
 
   elements.form.addEventListener('submit', (e) => {
@@ -117,11 +113,11 @@ const startApp = () => {
     const formData = new FormData(e.target);
     const currentUrl = formData.get('url');
     try {
-      validator(state.channel).validateSync({
+      validator(state.feeds).validateSync({
         url: currentUrl,
       });
       getNewRss(currentUrl);
-      setTimeout(() => rssCheckUpdate(watchedState), 5000);
+      setTimeout(() => rssCheckUpdate(), 5000);
     } catch (err) {
       watchedState.form.errors.push(err.message.key);
       watchedState.form.status = 'invalid';

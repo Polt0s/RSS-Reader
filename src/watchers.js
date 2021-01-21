@@ -1,13 +1,13 @@
 import onChange from 'on-change';
 import {
-  renderForm, renderChannel, renderPosts, renderModal, renderloadingState,
+  renderForm, renderFeeds, renderPosts, renderModal, renderloadingState,
 } from './creatingRender.js';
 
 const getWatchedState = (state, elements) => {
   const watchedState = onChange(state, (path) => {
     switch (path) {
-      case 'channel':
-        renderChannel(state, elements);
+      case 'feeds':
+        renderFeeds(state, elements);
         break;
       case 'readPosts':
       case 'posts':

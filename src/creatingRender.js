@@ -1,14 +1,14 @@
-/* eslint-disable no-param-reassign */
 import i18next from 'i18next';
 
-const renderChannel = (state, elements) => {
-  elements.channel.innerHTML = '';
+const renderFeeds = (state, elements) => {
+  const { feedsContainer } = elements;
+  const { feeds } = state;
   const header = document.createElement('h2');
   header.textContent = i18next.t('channel');
   const ul = document.createElement('ul');
   ul.classList.add('list-group', 'mb-5');
 
-  state.channel.forEach((feed) => {
+  feeds.forEach((feed) => {
     const list = document.createElement('li');
     list.classList.add('list-group-item');
     const title = document.createElement('h3');
@@ -19,12 +19,14 @@ const renderChannel = (state, elements) => {
     list.appendChild(description);
     ul.appendChild(list);
   });
-  elements.channel.appendChild(header);
-  elements.channel.appendChild(ul);
+  feedsContainer.innerHTML = '';
+  feedsContainer.appendChild(header);
+  feedsContainer.appendChild(ul);
 };
 
 const renderPosts = (state, elements) => {
   const { posts, readPosts } = state;
+  const { postsContainer } = elements;
   const header = document.createElement('h2');
   header.innerText = i18next.t('Posts');
   const ul = document.createElement('ul');
@@ -34,8 +36,8 @@ const renderPosts = (state, elements) => {
     const list = document.createElement('li');
     list.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
     const link = document.createElement('a');
-    const style = readPosts.has(post.id) ? 'font-weight-normal' : 'font-weight-bold';
-    link.classList.add(`${style}`);
+    const className = readPosts.has(post.id) ? 'font-weight-normal' : 'font-weight-bold';
+    link.classList.add(className);
     link.textContent = post.title;
     link.setAttribute('href', post.link);
     link.setAttribute('target', '_blank');
@@ -53,16 +55,17 @@ const renderPosts = (state, elements) => {
     list.append(button);
     ul.append(list);
   });
-  elements.posts.innerHTML = '';
-  elements.posts.append(header);
-  elements.posts.append(ul);
+  postsContainer.innerHTML = '';
+  postsContainer.append(header);
+  postsContainer.append(ul);
 };
 
 const renderModal = (posts, elements) => {
   const { modalTitle, modalDescription, modalLink } = elements;
-  modalTitle.textContent = posts.title;
-  modalDescription.textContent = posts.description;
-  modalLink.setAttribute('href', posts.link);
+  const { title, description, link } = posts;
+  modalTitle.textContent = title;
+  modalDescription.textContent = description;
+  modalLink.setAttribute('href', link);
 };
 
 const renderloadingState = (loadingState, elements) => {
@@ -107,5 +110,5 @@ const renderForm = (form, elements) => {
 };
 
 export {
-  renderChannel, renderPosts, renderForm, renderModal, renderloadingState,
+  renderFeeds, renderPosts, renderForm, renderModal, renderloadingState,
 };
