@@ -8,15 +8,15 @@ import parseRSS from './rss.js';
 import resources from './locales/index.js';
 import getWatchedState from './watchers';
 
-const getProxyUrl = (url) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+const getProxyUrl = (url) => `https://api.allorigins.win/get?url=${url}`;
 
 yup.setLocale({
   string: {
     url: () => ({ key: 'errorsUrl' }),
   },
   mixed: {
-    required: () => ({ key: 'network' }),
-    notOneOf: () => ({ key: 'errors' }),
+    required: () => ({ key: 'required' }),
+    notOneOf: () => ({ key: 'errorsExists' }),
   },
 });
 
@@ -33,13 +33,14 @@ const startApp = () => {
     channel: [],
     posts: [],
     modal: { id: null },
+    readPosts: new Set(),
     form: {
       status: 'filling',
       errors: [],
       currentURL: '',
     },
     loadingState: {
-      status: 'loading',
+      status: 'idle',
       errors: [],
     },
   };
@@ -48,9 +49,12 @@ const startApp = () => {
     output: document.querySelector('.output'),
     form: document.querySelector('form'),
     input: document.querySelector('.url-input'),
-    button: document.querySelector('.btn-primary'),
+    button: document.querySelector('[type="submit"]'),
     channel: document.querySelector('.feeds'),
     posts: document.querySelector('.posts'),
+    modalTitle: document.querySelector('.modal-title'),
+    modalDescription: document.querySelector('.modal-body'),
+    modalLink: document.querySelector('.full-article'),
   };
 
   const watchedState = getWatchedState(state, elements);
@@ -58,7 +62,7 @@ const startApp = () => {
   const getNewRss = (url) => {
     watchedState.loadingState.status = 'loading';
     watchedState.loadingState.errors = [];
-    axios.get(getProxyUrl(url))
+    axios.get(getProxyUrl(url, { timeout: 10000 }))
       .then((response) => {
         const rss = parseRSS(response.data.contents);
         const { title, description, posts } = rss;
@@ -69,10 +73,18 @@ const startApp = () => {
           id: url,
         });
         watchedState.posts.push(...posts.map((post) => ({ ...post, feedId: url })));
+        watchedState.loadingState.status = 'idle';
+        watchedState.loadingState.errors = [];
         watchedState.form.currentURL = null;
       })
       .catch((err) => {
-        watchedState.loadingState.errors.push(err);
+        if (err.isParsingError) {
+          watchedState.loadingState.errors.push('errorsRss');
+        } else if (err.isAxiosError) {
+          watchedState.loadingState.errors.push('network');
+        }
+        watchedState.loadingState.errors.push('unknown');
+        watchedState.loadingState.status = 'failed';
       });
   };
 
@@ -87,12 +99,13 @@ const startApp = () => {
       .then((response) => {
         const newPosts = response.flat();
         watchedState.posts = [...state.posts, ...newPosts];
-        setTimeout(() => rssCheckUpdate(watchedState), 5000);
       });
+    setTimeout(() => rssCheckUpdate(watchedState), 5000);
   };
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
+    watchedState.form.status = 'filling';
     watchedState.form.errors = [];
     const formData = new FormData(e.target);
     const currentUrl = formData.get('url');
@@ -100,14 +113,12 @@ const startApp = () => {
       validator(state.channel).validateSync({
         url: currentUrl,
       });
-      getNewRss(state.form.currentURL);
+      getNewRss(currentUrl);
+      setTimeout(() => rssCheckUpdate(watchedState), 5000);
     } catch (err) {
-      watchedState.form.errors.push(err.type);
+      watchedState.form.errors.push(err.message.key);
+      watchedState.form.status = 'invalid';
     }
-  });
-
-  elements.input.addEventListener('input', (e) => {
-    state.form.currentURL = e.target.value;
   });
 
   const openingModal = document.querySelector('.posts');
@@ -117,17 +128,15 @@ const startApp = () => {
     }
     const postId = e.target.dataset.id;
     watchedState.modal = { id: postId };
+    watchedState.readPosts.add(postId);
   });
-  rssCheckUpdate(watchedState);
 };
 
-const app = () => {
-  i18next.init({
-    lng: 'en',
-    resources,
-  }).then(() => {
-    startApp();
-  });
-};
+const app = () => i18next.init({
+  lng: 'en',
+  resources,
+}).then(() => {
+  startApp();
+});
 
 export default app;
