@@ -40,7 +40,6 @@ const startApp = () => {
     form: {
       status: 'filling',
       errors: [],
-      currentURL: '',
     },
     loadingState: {
       status: 'idle',
