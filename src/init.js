@@ -2,9 +2,13 @@ import * as yup from 'yup';
 import axios from 'axios';
 import _ from 'lodash';
 import i18next from 'i18next';
+import 'bootstrap';
 import parseRSS from './rss.js';
 import resources from './locales/index.js';
 import getWatchedState from './watchers';
+
+const responseTimeout = 10000;
+const checkTimeout = 5000;
 
 const getProxyUrl = (url) => {
   const urlWithProxy = new URL('/get', 'https://hexlet-allorigins.herokuapp.com');
@@ -15,15 +19,15 @@ const getProxyUrl = (url) => {
 
 yup.setLocale({
   string: {
-    url: () => ({ key: 'errorsUrl' }),
+    url: () => ({ key: 'errors.url' }),
   },
   mixed: {
-    required: () => ({ key: 'required' }),
-    notOneOf: () => ({ key: 'errorsExists' }),
+    required: () => ({ key: 'errors.required' }),
+    notOneOf: () => ({ key: 'errors.exists' }),
   },
 });
 
-const validator = (feeds) => {
+const validateUrl = (feeds) => {
   const feedsId = feeds.map((e) => e.id);
   const schema = yup.object().shape({
     url: yup.string().url().notOneOf(feedsId).required(),
@@ -54,17 +58,15 @@ const startApp = () => {
     button: document.querySelector('[type="submit"]'),
     feedsContainer: document.querySelector('.feeds'),
     postsContainer: document.querySelector('.posts'),
-    modalTitle: document.querySelector('.modal-title'),
-    modalDescription: document.querySelector('.modal-body'),
-    modalLink: document.querySelector('.full-article'),
+    modal: document.querySelector('.modal'),
   };
 
   const watchedState = getWatchedState(state, elements);
 
-  const getNewRss = (url) => {
+  const loadNewRss = (url) => {
     watchedState.loadingState.status = 'loading';
     watchedState.loadingState.errors = [];
-    axios.get(getProxyUrl(url, { timeout: 10000 }))
+    axios.get(getProxyUrl(url), { timeout: responseTimeout })
       .then((response) => {
         const rss = parseRSS(response.data.contents);
         const { title, description, posts } = rss;
@@ -81,28 +83,30 @@ const startApp = () => {
       })
       .catch((err) => {
         if (err.isParsingError) {
-          watchedState.loadingState.errors.push('errorsRss');
+          watchedState.loadingState.errors.push('errors.rss');
         } else if (err.isAxiosError) {
-          watchedState.loadingState.errors.push('network');
+          watchedState.loadingState.errors.push('errors.network');
         }
-        watchedState.loadingState.errors.push('unknown');
+        watchedState.loadingState.errors.push('errors.unknown');
         watchedState.loadingState.status = 'failed';
       });
   };
 
   const rssCheckUpdate = () => {
-    const promise = watchedState.feeds.map((id) => axios.get(getProxyUrl(id.url))
-      .then((response) => {
-        const rss = parseRSS(response.data.contents);
+    const promises = watchedState.feeds.map((id) => axios.get(getProxyUrl(id.url))
+      .then((responses) => {
+        const rss = parseRSS(responses.data.contents);
         const { posts } = rss;
         return _.differenceWith(posts.link, state.posts);
       }));
-    Promise.all(promise)
-      .then((response) => {
-        const newPosts = response.flat();
+    Promise.all(promises)
+      .then((responses) => {
+        const newPosts = responses.flat();
         watchedState.posts = [...state.posts, ...newPosts];
+      })
+      .finally(() => {
+        setTimeout(() => rssCheckUpdate(), checkTimeout);
       });
-    setTimeout(() => rssCheckUpdate(), 5000);
   };
 
   elements.form.addEventListener('submit', (e) => {
@@ -112,23 +116,22 @@ const startApp = () => {
     const formData = new FormData(e.target);
     const currentUrl = formData.get('url');
     try {
-      validator(state.feeds).validateSync({
+      validateUrl(state.feeds).validateSync({
         url: currentUrl,
       });
-      getNewRss(currentUrl);
-      setTimeout(() => rssCheckUpdate(), 5000);
+      loadNewRss(currentUrl);
+      setTimeout(() => rssCheckUpdate(), checkTimeout);
     } catch (err) {
       watchedState.form.errors.push(err.message.key);
       watchedState.form.status = 'invalid';
     }
   });
 
-  const openingModal = document.querySelector('.posts');
-  openingModal.addEventListener('click', (e) => {
-    if (!e.target.dataset.id) {
+  elements.postsContainer.addEventListener('click', (e) => {
+    const postId = e.target.dataset.id;
+    if (!postId) {
       return;
     }
-    const postId = e.target.dataset.id;
     watchedState.modal = { id: postId };
     watchedState.readPosts.add(postId);
   });

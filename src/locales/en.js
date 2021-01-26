@@ -4,10 +4,12 @@ export default {
     Posts: 'Posts',
     preview: 'preview',
     loading: 'Rss has been loaded',
-    errorsUrl: 'Must be valid url',
-    errorsExists: 'Rss already exists',
-    errorsRss: "This source doesn't contain valid rss",
-    network: 'Network error',
-    unknown: 'Something went wrong',
+    errors: {
+      url: 'Must be valid url',
+      exists: 'Rss already exists',
+      rss: "This source doesn't contain valid rss",
+      network: 'Network error',
+      unknown: 'Something went wrong',
+    },
   },
 };

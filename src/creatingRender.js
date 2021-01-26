@@ -17,7 +17,7 @@ const renderFeeds = (state, elements) => {
     description.textContent = feed.description;
     list.appendChild(title);
     list.appendChild(description);
-    ul.appendChild(list);
+    ul.prepend(list);
   });
   feedsContainer.innerHTML = '';
   feedsContainer.appendChild(header);
@@ -53,7 +53,7 @@ const renderPosts = (state, elements) => {
     button.dataset.target = '#modal';
     list.append(link);
     list.append(button);
-    ul.append(list);
+    ul.prepend(list);
   });
   postsContainer.innerHTML = '';
   postsContainer.append(header);
@@ -61,15 +61,16 @@ const renderPosts = (state, elements) => {
 };
 
 const renderModal = (posts, elements) => {
-  const { modalTitle, modalDescription, modalLink } = elements;
+  const { modal } = elements;
   const { title, description, link } = posts;
-  modalTitle.textContent = title;
-  modalDescription.textContent = description;
-  modalLink.setAttribute('href', link);
+  modal.querySelector('.modal-title').textContent = title;
+  modal.querySelector('.modal-body').textContent = description;
+  modal.querySelector('.full-article').setAttribute('href', link);
 };
 
-const renderloadingState = (loadingState, elements) => {
+const renderloadingState = (state, elements) => {
   const { input, output, button } = elements;
+  const { loadingState } = state;
   switch (loadingState.status) {
     case 'loading':
       input.readOnly = true;
@@ -97,7 +98,8 @@ const renderloadingState = (loadingState, elements) => {
   }
 };
 
-const renderForm = (form, elements) => {
+const renderForm = (state, elements) => {
+  const { form } = state;
   const { output, input } = elements;
   if (form.status === 'invalid') {
     input.classList.add('is-invalid');

@@ -14,10 +14,10 @@ const getWatchedState = (state, elements) => {
         renderPosts(state, elements);
         break;
       case 'form.status':
-        renderForm(state.form, elements);
+        renderForm(state, elements);
         break;
       case 'loadingState.status':
-        renderloadingState(state.loadingState, elements);
+        renderloadingState(state, elements);
         break;
       case 'modal':
         renderModal(state.posts.find(({ id }) => id === state.modal.id), elements);
