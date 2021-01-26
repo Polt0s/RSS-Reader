@@ -17,7 +17,7 @@ const renderFeeds = (state, elements) => {
     description.textContent = feed.description;
     list.appendChild(title);
     list.appendChild(description);
-    ul.prepend(list);
+    ul.appendChild(list);
   });
   feedsContainer.innerHTML = '';
   feedsContainer.appendChild(header);
@@ -53,7 +53,7 @@ const renderPosts = (state, elements) => {
     button.dataset.target = '#modal';
     list.append(link);
     list.append(button);
-    ul.prepend(list);
+    ul.append(list);
   });
   postsContainer.innerHTML = '';
   postsContainer.append(header);
@@ -61,14 +61,11 @@ const renderPosts = (state, elements) => {
 };
 
 const renderModal = (posts, elements) => {
-  const { modalTitle, modalDescription, modalLink } = elements;
+  const { modal } = elements;
   const { title, description, link } = posts;
-  modalTitle.textContent = title;
-  modalDescription.textContent = description;
-  modalLink.setAttribute('href', link);
-  // modal.querySelector('.modal-title').textContent = title;
-  // modal.querySelector('.modal-body').textContent = description;
-  // modal.querySelector('.full-article').setAttribute('href', link);
+  modal.querySelector('.modal-title').textContent = title;
+  modal.querySelector('.modal-body').textContent = description;
+  modal.querySelector('.full-article').setAttribute('href', link);
 };
 
 const renderloadingState = (state, elements) => {
