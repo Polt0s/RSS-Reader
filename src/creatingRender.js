@@ -61,11 +61,14 @@ const renderPosts = (state, elements) => {
 };
 
 const renderModal = (posts, elements) => {
-  const { modal } = elements;
+  const { modalTitle, modalDescription, modalLink } = elements;
   const { title, description, link } = posts;
-  modal.querySelector('.modal-title').textContent = title;
-  modal.querySelector('.modal-body').textContent = description;
-  modal.querySelector('.full-article').setAttribute('href', link);
+  modalTitle.textContent = title;
+  modalDescription.textContent = description;
+  modalLink.setAttribute('href', link);
+  // modal.querySelector('.modal-title').textContent = title;
+  // modal.querySelector('.modal-body').textContent = description;
+  // modal.querySelector('.full-article').setAttribute('href', link);
 };
 
 const renderloadingState = (state, elements) => {

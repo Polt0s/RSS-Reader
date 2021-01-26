@@ -58,7 +58,10 @@ const startApp = () => {
     button: document.querySelector('[type="submit"]'),
     feedsContainer: document.querySelector('.feeds'),
     postsContainer: document.querySelector('.posts'),
-    modal: document.querySelector('.modal'),
+    // modal: document.querySelector('.modal'),
+    modalTitle: document.querySelector('.modal-title'),
+    modalDescription: document.querySelector('.modal-body'),
+    modalLink: document.querySelector('.full-article'),
   };
 
   const watchedState = getWatchedState(state, elements);
