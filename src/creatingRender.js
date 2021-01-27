@@ -17,7 +17,7 @@ const renderFeeds = (state, elements) => {
     description.textContent = feed.description;
     list.appendChild(title);
     list.appendChild(description);
-    ul.appendChild(list);
+    ul.prepend(list);
   });
   feedsContainer.innerHTML = '';
   feedsContainer.appendChild(header);

@@ -76,7 +76,7 @@ const startApp = () => {
           url,
           id: url,
         });
-        watchedState.posts.push(...posts.map((post) => ({ ...post, feedId: url })));
+        watchedState.posts.unshift(...posts.map((post) => ({ ...post, feedId: url })));
         watchedState.loadingState.status = 'idle';
         watchedState.loadingState.errors = [];
         watchedState.form.currentURL = null;
