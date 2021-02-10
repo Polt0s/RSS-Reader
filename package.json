@@ -8,6 +8,11 @@
     "start": "webpack-dev-server",
     "test": "jest --colors"
   },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "./jest.setup.js"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Polt0s/frontend-project-lvl3.git"
@@ -23,6 +28,7 @@
     "bootstrap": "^4.5.3",
     "i18next": "^19.8.4",
     "lodash": "^4.17.20",
+    "jquery": "^3.5.1",
     "on-change": "^2.2.0",
     "popper.js": "^1.16.1",
     "yup": "^0.29.3"
