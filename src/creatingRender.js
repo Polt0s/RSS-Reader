@@ -83,7 +83,7 @@ const renderloadingState = (state, elements) => {
       input.readOnly = false;
       button.disabled = false;
       output.classList.add('text-danger');
-      output.textContent = i18next.t(loadingState.errors);
+      output.textContent = i18next.t(loadingState.error);
       break;
     case 'idle':
       input.value = '';

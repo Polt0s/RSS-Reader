@@ -17,18 +17,8 @@ const getProxyUrl = (url) => {
   return urlWithProxy.toString();
 };
 
-yup.setLocale({
-  string: {
-    url: () => ({ key: 'errors.url' }),
-  },
-  mixed: {
-    required: () => ({ key: 'errors.required' }),
-    notOneOf: () => ({ key: 'errors.exists' }),
-  },
-});
-
-const validateUrl = (feeds) => {
-  const feedsId = feeds.map((e) => e.id);
+const getValidationUrl = (feeds) => {
+  const feedsId = feeds.map((e) => e.url);
   const schema = yup.object().shape({
     url: yup.string().url().notOneOf(feedsId).required(),
   });
@@ -47,7 +37,7 @@ const startApp = () => {
     },
     loadingState: {
       status: 'idle',
-      errors: [],
+      error: '',
     },
   };
 
@@ -65,7 +55,7 @@ const startApp = () => {
 
   const loadNewRss = (url) => {
     watchedState.loadingState.status = 'loading';
-    watchedState.loadingState.errors = [];
+    watchedState.loadingState.error = '';
     axios.get(getProxyUrl(url), { timeout: responseTimeout })
       .then((response) => {
         const rss = parseRSS(response.data.contents);
@@ -76,36 +66,24 @@ const startApp = () => {
           url,
           id: url,
         });
-        watchedState.posts.unshift(...posts.map((post) => ({ ...post, feedId: url })));
+        watchedState.posts.unshift(...posts.map((post) => ({
+          ...post,
+          feedId: url,
+          id: _.uniqueId(),
+        })));
         watchedState.loadingState.status = 'idle';
-        watchedState.loadingState.errors = [];
-        watchedState.form.currentURL = null;
+        watchedState.loadingState.error = '';
       })
       .catch((err) => {
         if (err.isParsingError) {
-          watchedState.loadingState.errors.push('errors.rss');
+          watchedState.loadingState.error = 'errors.rss';
+          watchedState.loadingState.status = 'failed';
         } else if (err.isAxiosError) {
-          watchedState.loadingState.errors.push('errors.network');
+          watchedState.loadingState.error = 'errors.network';
+          watchedState.loadingState.status = 'failed';
         }
-        watchedState.loadingState.errors.push('errors.unknown');
+        watchedState.loadingState.error = 'errors.unknown';
         watchedState.loadingState.status = 'failed';
-      });
-  };
-
-  const rssCheckUpdate = () => {
-    const promises = watchedState.feeds.map((id) => axios.get(getProxyUrl(id.url))
-      .then((responses) => {
-        const rss = parseRSS(responses.data.contents);
-        const { posts } = rss;
-        return _.differenceWith(posts.link, state.posts);
-      }));
-    Promise.all(promises)
-      .then((responses) => {
-        const newPosts = responses.flat();
-        watchedState.posts = [...state.posts, ...newPosts];
-      })
-      .finally(() => {
-        setTimeout(() => rssCheckUpdate(), checkTimeout);
       });
   };
 
@@ -116,16 +94,45 @@ const startApp = () => {
     const formData = new FormData(e.target);
     const currentUrl = formData.get('url');
     try {
-      validateUrl(state.feeds).validateSync({
+      getValidationUrl(state.feeds).validateSync({
         url: currentUrl,
       });
+      yup.setLocale({
+        string: {
+          url: () => ({ key: 'errors.url' }),
+        },
+        mixed: {
+          required: () => ({ key: 'errors.required' }),
+          notOneOf: () => ({ key: 'errors.exists' }),
+        },
+      });
       loadNewRss(currentUrl);
-      setTimeout(() => rssCheckUpdate(), checkTimeout);
     } catch (err) {
       watchedState.form.errors.push(err.message.key);
       watchedState.form.status = 'invalid';
     }
   });
+
+  const rssCheckUpdate = () => {
+    if (watchedState.feeds.length === 0) {
+      setTimeout(() => rssCheckUpdate(), checkTimeout);
+      return;
+    }
+    const promises = watchedState.feeds.map((feed) => axios.get(getProxyUrl(feed.url))
+      .then((response) => {
+        const rss = parseRSS(response.data.contents);
+        const { posts } = rss;
+        return _.difference(posts.link, state.posts.link);
+      }));
+    Promise.all(promises)
+      .then((response) => {
+        const newPosts = response.flat();
+        watchedState.posts.unshift(...newPosts);
+      })
+      .finally(() => {
+        setTimeout(() => rssCheckUpdate(), checkTimeout);
+      });
+  };
 
   elements.postsContainer.addEventListener('click', (e) => {
     const postId = e.target.dataset.id;
@@ -135,6 +142,7 @@ const startApp = () => {
     watchedState.modal = { id: postId };
     watchedState.readPosts.add(postId);
   });
+  setTimeout(() => rssCheckUpdate(), checkTimeout);
 };
 
 const app = () => i18next.init({

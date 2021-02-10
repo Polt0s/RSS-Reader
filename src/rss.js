@@ -17,9 +17,8 @@ const parseRSS = (data) => {
     const title = postItem.querySelector('title').textContent;
     const description = postItem.querySelector('description').textContent;
     const link = postItem.querySelector('link').textContent;
-    const id = postItem.querySelector('guid').textContent;
     return {
-      title, description, link, id,
+      title, description, link,
     };
   });
   return {
