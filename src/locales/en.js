@@ -1,6 +1,6 @@
 export default {
   translation: {
-    channel: 'Channel',
+    channel: 'Channels',
     Posts: 'Posts',
     preview: 'preview',
     loading: 'Rss has been loaded',

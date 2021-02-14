@@ -121,8 +121,9 @@ const startApp = () => {
     const promises = watchedState.feeds.map((feed) => axios.get(getProxyUrl(feed.url))
       .then((response) => {
         const rss = parseRSS(response.data.contents);
-        const { posts } = rss;
-        return _.difference(posts.link, state.posts.link);
+        const newPosts = rss.posts.map((item) => ({ ...item, url: feed.url }));
+        const oldPosts = watchedState.posts.filter((post) => post.feedId === feed.url);
+        return _.differenceWith(newPosts, oldPosts, (p1, p2) => p1.link === p2.link);
       }));
     Promise.all(promises)
       .then((response) => {
