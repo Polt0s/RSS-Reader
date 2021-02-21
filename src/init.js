@@ -17,12 +17,14 @@ const getProxyUrl = (url) => {
   return urlWithProxy.toString();
 };
 
-const getValidationUrl = (feeds) => {
-  const feedsId = feeds.map((e) => e.url);
+const validateUrl = (currentUrl, feeds) => {
+  const feedsIds = feeds.map((e) => e.url);
   const schema = yup.object().shape({
-    url: yup.string().url().notOneOf(feedsId).required(),
+    url: yup.string().url().notOneOf(feedsIds).required(),
   });
-  return schema;
+  schema.validateSync({
+    url: currentUrl,
+  });
 };
 
 const startApp = () => {
@@ -33,7 +35,7 @@ const startApp = () => {
     readPosts: new Set(),
     form: {
       status: 'filling',
-      errors: [],
+      errors: null,
     },
     loadingState: {
       status: 'idle',
@@ -94,21 +96,11 @@ const startApp = () => {
     const formData = new FormData(e.target);
     const currentUrl = formData.get('url');
     try {
-      getValidationUrl(state.feeds).validateSync({
-        url: currentUrl,
-      });
-      yup.setLocale({
-        string: {
-          url: () => ({ key: 'errors.url' }),
-        },
-        mixed: {
-          required: () => ({ key: 'errors.required' }),
-          notOneOf: () => ({ key: 'errors.exists' }),
-        },
-      });
+      validateUrl(currentUrl, state.feeds);
       loadNewRss(currentUrl);
+      watchedState.form.errors = null;
     } catch (err) {
-      watchedState.form.errors.push(err.message.key);
+      watchedState.form.errors = err.message.key;
       watchedState.form.status = 'invalid';
     }
   });
@@ -128,6 +120,7 @@ const startApp = () => {
     Promise.all(promises)
       .then((response) => {
         const newPosts = response.flat();
+        watchedState.form.errors = null;
         watchedState.posts.unshift(...newPosts);
       })
       .finally(() => {
@@ -151,6 +144,15 @@ const app = () => i18next.init({
   resources,
 }).then(() => {
   startApp();
+  yup.setLocale({
+    string: {
+      url: () => ({ key: 'errors.url' }),
+    },
+    mixed: {
+      required: () => ({ key: 'errors.required' }),
+      notOneOf: () => ({ key: 'errors.exists' }),
+    },
+  });
 });
 
 export default app;
