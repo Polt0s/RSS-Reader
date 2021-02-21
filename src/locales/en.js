@@ -1,14 +1,14 @@
 export default {
   translation: {
-    channel: 'Channels',
-    Posts: 'Posts',
-    preview: 'preview',
-    loading: 'Rss has been loaded',
+    channel: 'Фиды',
+    Posts: 'Посты',
+    preview: 'Просмотр',
+    loading: 'RSS успешно загружен',
     errors: {
-      url: 'Must be valid url',
-      exists: 'Rss already exists',
-      rss: 'This source doesn\'t contain valid rss',
-      network: 'Network error',
+      url: 'Ссылка должна быть валидным URL',
+      exists: 'RSS уже существует',
+      rss: 'Ресурс не содержит валидный RSS',
+      network: 'Ошибка сети',
       unknown: 'Something went wrong',
     },
   },
