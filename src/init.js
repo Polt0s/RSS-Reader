@@ -17,14 +17,24 @@ const getProxyUrl = (url) => {
   return urlWithProxy.toString();
 };
 
-const validateUrl = (currentUrl, feeds) => {
-  const feedsIds = feeds.map((e) => e.url);
+const getValidateSchema = (urls) => {
   const schema = yup.object().shape({
-    url: yup.string().url().notOneOf(feedsIds).required(),
+    url: yup.string().url().notOneOf(urls).required(),
   });
-  schema.validateSync({
-    url: currentUrl,
-  });
+  return schema;
+};
+
+const validateUrl = (url, feeds) => {
+  try {
+    const feedsUrls = feeds.map((feed) => feed.url);
+    const schema = getValidateSchema(feedsUrls);
+    schema.validateSync({
+      url,
+    });
+    return null;
+  } catch (e) {
+    return e.message.key;
+  }
 };
 
 const startApp = () => {
@@ -35,13 +45,23 @@ const startApp = () => {
     readPosts: new Set(),
     form: {
       status: 'filling',
-      errors: null,
+      error: null,
     },
     loadingState: {
       status: 'idle',
       error: '',
     },
   };
+
+  yup.setLocale({
+    string: {
+      url: () => ({ key: 'errors.url' }),
+    },
+    mixed: {
+      required: () => ({ key: 'errors.required' }),
+      notOneOf: () => ({ key: 'errors.exists' }),
+    },
+  });
 
   const elements = {
     output: document.querySelector('.output'),
@@ -92,37 +112,30 @@ const startApp = () => {
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     watchedState.form.status = 'filling';
-    watchedState.form.errors = [];
+    watchedState.form.error = null;
     const formData = new FormData(e.target);
     const currentUrl = formData.get('url');
-    try {
-      validateUrl(currentUrl, state.feeds);
+    const error = validateUrl(currentUrl, state.feeds);
+    if (!error) {
       loadNewRss(currentUrl);
-      watchedState.form.errors = null;
-    } catch (err) {
-      watchedState.form.errors = err.message.key;
+      watchedState.form.error = null;
+    } else {
+      watchedState.form.error = error;
       watchedState.form.status = 'invalid';
     }
   });
 
   const rssCheckUpdate = () => {
-    if (watchedState.feeds.length === 0) {
-      setTimeout(() => rssCheckUpdate(), checkTimeout);
-      return;
-    }
     const promises = watchedState.feeds.map((feed) => axios.get(getProxyUrl(feed.url))
       .then((response) => {
         const rss = parseRSS(response.data.contents);
         const newPosts = rss.posts.map((item) => ({ ...item, url: feed.url }));
         const oldPosts = watchedState.posts.filter((post) => post.feedId === feed.url);
-        return _.differenceWith(newPosts, oldPosts, (p1, p2) => p1.link === p2.link);
+        const posts = _.differenceWith(newPosts, oldPosts, (p1, p2) => p1.link === p2.link);
+        watchedState.posts.unshift(...posts);
+      }).catch(() => {
       }));
     Promise.all(promises)
-      .then((response) => {
-        const newPosts = response.flat();
-        watchedState.form.errors = null;
-        watchedState.posts.unshift(...newPosts);
-      })
       .finally(() => {
         setTimeout(() => rssCheckUpdate(), checkTimeout);
       });
@@ -144,15 +157,6 @@ const app = () => i18next.init({
   resources,
 }).then(() => {
   startApp();
-  yup.setLocale({
-    string: {
-      url: () => ({ key: 'errors.url' }),
-    },
-    mixed: {
-      required: () => ({ key: 'errors.required' }),
-      notOneOf: () => ({ key: 'errors.exists' }),
-    },
-  });
 });
 
 export default app;

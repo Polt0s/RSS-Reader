@@ -104,7 +104,7 @@ const renderForm = (state, elements) => {
   if (form.status === 'invalid') {
     input.classList.add('is-invalid');
     output.classList.remove('text-success');
-    output.textContent = i18next.t(form.errors);
+    output.textContent = i18next.t(form.error);
     output.classList.add('text-danger');
   } else {
     input.classList.remove('is-invalid');
