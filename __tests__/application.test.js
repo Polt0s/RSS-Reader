@@ -131,26 +131,6 @@ describe('handle disabling ui elements during loading', () => {
     });
     expect(elements.submit).toBeEnabled();
   });
-
-  test('handle failed loading', async () => {
-    nock(corsProxy)
-      .get(corsProxyApi)
-      .query({ url: htmlUrl, disableCache: 'true' })
-      .reply(200, { contents: html });
-
-    expect(elements.input).not.toHaveAttribute('readonly');
-    expect(elements.submit).toBeEnabled();
-
-    userEvent.type(elements.input, htmlUrl);
-    userEvent.click(elements.submit);
-    expect(elements.input).toHaveAttribute('readonly');
-    expect(elements.submit).toBeDisabled();
-
-    await waitFor(() => {
-      expect(elements.input).not.toHaveAttribute('readonly');
-    });
-    expect(elements.submit).toBeEnabled();
-  });
 });
 
 describe('load feeds', () => {
